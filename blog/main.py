@@ -16,7 +16,7 @@ def get_db():
         db.close()
 
 
-@app.post('/blog')
+@app.post('/blogs')
 def create_blog(blog: schemas.Blog, db: Session = Depends(get_db)):
     new_blog = models.Blog(
         title=blog.title,
@@ -26,3 +26,15 @@ def create_blog(blog: schemas.Blog, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_blog)
     return new_blog
+
+
+@app.get('/blogs')
+def get_blogs(db: Session = Depends(get_db)):
+    blogs = db.query(models.Blog).all()
+    return blogs
+
+
+@app.get('/blogs/{blog_id}')
+def get_blogs(blog_id, db: Session = Depends(get_db)):
+    blog = db.query(models.Blog).filter(models.Blog.id == blog_id).first()
+    return blog

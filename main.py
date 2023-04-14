@@ -42,7 +42,7 @@ class Blog(BaseModel):
 
 
 @app.post('/blog')
-# the first parameter will be treated as the request body, you can name it whatever you want.
+# you can name it whatever you want.
 def create_blog(blog: Blog):
     return {'data': f'A blog was created with the title {blog.title}.'}
 

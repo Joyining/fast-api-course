@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean
-from .database import Base, engine
+from .database import Base
 
 
 class Blog(Base):
@@ -9,6 +9,3 @@ class Blog(Base):
     title = Column(String)
     body = Column(String)
     published = Column(Boolean)
-
-
-Base.metadata.create_all(bind=engine)

@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from . import schemas, models
 from .database import engine, SessionLocal
+from typing import List
 
 app = FastAPI()
 
@@ -40,13 +41,13 @@ def delete_blog(blog_id, db: Session = Depends(get_db)):
     return 'deleted.'
 
 
-@app.get('/blogs')
+@app.get('/blogs', response_model=List[schemas.ShowBlog])
 def get_blogs(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 
-@app.get('/blogs/{blog_id}')
+@app.get('/blogs/{blog_id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def get_blog(blog_id, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blog_id).first()
     if not blog:

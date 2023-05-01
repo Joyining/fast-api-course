@@ -3,11 +3,15 @@ from sqlalchemy.orm import Session
 from .. import schemas, database, models
 from typing import List
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/blogs',
+    tags=['blogs']
+)
+get_db = database.get_db
 
 
-@router.post('/blogs', status_code=status.HTTP_201_CREATED, tags=['blogs'])
-def create_blog(blog: schemas.Blog, db: Session = Depends(database.get_db)):
+@router.post('/', status_code=status.HTTP_201_CREATED)
+def create_blog(blog: schemas.Blog, db: Session = Depends(get_db)):
     new_blog = models.Blog(
         title=blog.title,
         body=blog.body,
@@ -20,8 +24,8 @@ def create_blog(blog: schemas.Blog, db: Session = Depends(database.get_db)):
 
 
 # https://docs.sqlalchemy.org/en/20/orm/queryguide/query.html#sqlalchemy.orm.Query.delete
-@router.delete('/blogs/{blog_id}', status_code=status.HTTP_204_NO_CONTENT, tags=['blogs'])
-def delete_blog(blog_id, db: Session = Depends(database.get_db)):
+@router.delete('/{blog_id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_blog(blog_id, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id ==
                                         blog_id).delete(synchronize_session=False)
     if not blog:
@@ -31,14 +35,14 @@ def delete_blog(blog_id, db: Session = Depends(database.get_db)):
     return 'deleted.'
 
 
-@router.get('/blogs', response_model=List[schemas.ShowBlog], tags=['blogs'])
-def get_blogs(db: Session = Depends(database.get_db)):
+@router.get('/', response_model=List[schemas.ShowBlog])
+def get_blogs(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 
-@router.get('/blogs/{blog_id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog, tags=['blogs'])
-def get_blog(blog_id, db: Session = Depends(database.get_db)):
+@router.get('/{blog_id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
+def get_blog(blog_id, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blog_id).first()
     if not blog:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
@@ -47,8 +51,8 @@ def get_blog(blog_id, db: Session = Depends(database.get_db)):
 
 
 # https://docs.sqlalchemy.org/en/20/orm/queryguide/query.html#sqlalchemy.orm.Query.update
-@router.put('/blogs/{blog_id}', status_code=status.HTTP_202_ACCEPTED, tags=['blogs'])
-def update_blog(blog_id, request: schemas.Blog, db: Session = Depends(database.get_db)):
+@router.put('/{blog_id}', status_code=status.HTTP_202_ACCEPTED)
+def update_blog(blog_id, request: schemas.Blog, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == blog_id).first()
     if not blog:
         raise HTTPException(status.HTTP_404_NOT_FOUND,

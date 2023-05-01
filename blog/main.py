@@ -22,7 +22,8 @@ def get_db():
 def create_blog(blog: schemas.Blog, db: Session = Depends(get_db)):
     new_blog = models.Blog(
         title=blog.title,
-        body=blog.body
+        body=blog.body,
+        user_id=1  # FIXME: Temporarily hard code user_id to 1.
     )
     db.add(new_blog)
     db.commit()

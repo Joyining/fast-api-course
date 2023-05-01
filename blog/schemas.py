@@ -1,19 +1,5 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
-
-
-class Blog(BaseModel):
-    title: str
-    body: str
-    published: Optional[bool]
-
-
-class ShowBlog(BaseModel):
-    title: str
-    body: str
-
-    class Config():
-        orm_mode = True
 
 
 class User(BaseModel):
@@ -22,9 +8,31 @@ class User(BaseModel):
     password: str
 
 
+class BaseBlog(BaseModel):
+    title: str
+    body: str
+    published: Optional[bool]
+
+
+class Blog(BaseBlog):
+
+    class Config():
+        orm_mode = True
+
+
 class ShowUser(BaseModel):
     name: str
     email: str
+    blogs: List[Blog]
+
+    class Config():
+        orm_mode = True
+
+
+class ShowBlog(BaseModel):
+    title: str
+    body: str
+    creator: ShowUser
 
     class Config():
         orm_mode = True

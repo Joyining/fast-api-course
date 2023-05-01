@@ -2,6 +2,11 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 
+class Login(BaseModel):
+    username: str
+    password: str
+
+
 class User(BaseModel):
     name: str
     email: str

@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from .. import schemas, database
+from .. import schemas, database, oauth2
 from typing import List
 from ..repository import blogs
 
 router = APIRouter(
     prefix='/blogs',
-    tags=['blogs']
+    tags=['blogs'],
+    dependencies=[Depends(oauth2.get_current_user)]
 )
 get_db = database.get_db
 
